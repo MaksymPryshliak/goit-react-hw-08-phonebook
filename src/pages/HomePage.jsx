@@ -13,7 +13,7 @@ export const HomePage = () => {
         Login: <b>somelogin@ffff.com</b>
       </Typography>
       <Typography variant="h6" component="p" sx={{ml: 1}}>
-        Password: <b>11111111</b>
+        Password: <b>qweqweqwe</b>
       </Typography>
       {!isLoggedIn && (
         <div style={{marginTop: '16px'}}>
