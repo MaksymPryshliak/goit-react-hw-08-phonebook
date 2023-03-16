@@ -1,68 +1,103 @@
-import css from './ContactForm.module.css';
-import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { addContact, fetchContacts } from 'redux/contacts/contactsOperations';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'redux/contacts/contactsOperations';
+import { Stack, TextField, Box, Button } from '@mui/material';
 
 export const ContactForm = () => {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [number, setNumber] = useState('');
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchContacts())
-  }, [dispatch])
+  const contacts = useSelector(state => state.contacts.contacts);
 
   const handleChange = evt => {
     const { name, value } = evt.target;
     switch (name) {
       case 'name':
-        setName(value)
+        setName(value);
         break;
-      case 'phone':
-        setPhone(value);
+      case 'number':
+        setNumber(value);
         break;
       default:
         break;
     }
   };
 
-  const  onSubmitFrom = evt => {
+  const onSubmitFrom = evt => {
     evt.preventDefault();
-    dispatch(addContact({ name, phone }));
+    if (
+      contacts.find(
+        contact => contact.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+      )
+    ) {
+      return toast.error(`This email is already used`, {
+        position: 'bottom-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+      });
+    }
+    dispatch(addContact({ name, number }));
     setName('');
-    setPhone('');
-
+    setNumber('');
   };
 
   return (
-    <form className={css.contactForm} onSubmit={onSubmitFrom}>
-      <label className={css.formLabel}>Name</label>
-      <input
-        className={css.contactInput}
-        type="text"
-        name="name"
-        pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-        title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-        required
-        placeholder="Enter name"
-        value={name}
-        onChange={handleChange}
-      />
-      <label className={css.formLabel}>Number</label>
-      <input
-        className={css.contactInput}
-        type="tel"
-        name="phone"
-        pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-        title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-        required
-        placeholder="Enter number"
-        value={phone}
-        onChange={handleChange}
-      />
-      <button type="submit" className={css.formButton}>
-        Add contact
-      </button>
-    </form>
+    <Stack>
+      <form onSubmit={onSubmitFrom}>
+        <Box sx={{ width: '250px' }}>
+          <TextField
+            label="Name"
+            type="text"
+            name="name"
+            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+            required
+            autoComplete="off"
+            variant="filled"
+            color="primary"
+            sx={{
+              mt: 2,
+              border: '1px solid #28627c',
+              overflow: 'hidden',
+              borderRadius: '5px',
+              backgroundColor: '#edf9fe',
+            }}
+            placeholder="Enter name"
+            value={name}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Number"
+            type="tel"
+            name="number"
+            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+            required
+            placeholder="Enter number"
+            variant="filled"
+            color="primary"
+            fullWidth
+            sx={{
+              mt: 2,
+              border: '1px solid #28627c',
+              overflow: 'hidden',
+              borderRadius: '5px',
+              backgroundColor: '#edf9fe',
+            }}
+            value={number}
+            onChange={handleChange}
+          />
+        </Box>
+
+        <Button type="submit" variant='outlined' sx={{mt: 2}}>Add contact</Button>
+      </form>
+    </Stack>
   );
 };

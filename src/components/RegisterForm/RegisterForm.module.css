@@ -1,0 +1,11 @@
+.link {
+    color: #28627c;
+    opacity: 0.5;
+    transition: opacity ease-in-out 250ms;
+  }
+  
+  .link:hover,
+  .link:focus {
+    opacity: 1;
+  }
+  
